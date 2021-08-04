@@ -1,0 +1,1104 @@
+cscope 15 $HOME/Desktop/rabin-cdc               0000005016
+	@main.c
+
+1 
+	~<°dio.h
+>
+
+2 
+	~<uni°d.h
+>
+
+3 
+	~<as£π.h
+>
+
+4 
+	~<°dboﬁ.h
+>
+
+5 
+	~"øbö.h
+"
+
+8 
+uöt8_t
+ 
+	gbuf
+[1024];
+
+9 
+size_t
+ 
+	gbyãs
+;
+
+11 
+	$maö
+() {
+
+12 
+øbö_t
+ *
+hash
+;
+
+13 
+hash
+ = 
+	`øbö_öô
+();
+
+15 
+chunks
+ = 0;
+
+17 c⁄° * 
+fûíame
+ = "./input.txt";
+
+19 
+FILE
+* 
+ö_fûe
+ = 
+	`f›í
+(
+fûíame
+, "r");
+
+20 
+˙t
+ = 0;
+
+21 
+	`¥ötf
+("bu‡%lu\n", (
+buf
+));
+
+22 !
+	`„of
+(
+ö_fûe
+)) {
+
+23 
+˙t
+++;
+
+24 
+size_t
+ 
+Àn
+ = 
+	`‰ód
+(
+buf
+, 1, (buf), 
+ö_fûe
+);
+
+25 
+uöt8_t
+ *
+±r
+ = &
+buf
+[0];
+
+27 
+	`¥ötf
+("À¿%u\n", 
+Àn
+);
+
+28 
+byãs
+ +
+Àn
+;
+
+31 
+ªmaöög
+ = 
+	`øbö_√xt_chunk
+(
+hash
+, 
+±r
+, 
+Àn
+);
+
+32 
+	`¥ötf
+("ªmaöög %d \n", 
+ªmaöög
+);
+
+33 i‡(
+ªmaöög
+ < 0) {
+
+37 
+Àn
+ -
+ªmaöög
+;
+
+38 
+±r
+ +
+ªmaöög
+;
+
+40 
+	`¥ötf
+("%d %016llx\n",
+
+41 
+œ°_chunk
+.
+Àngth
+,
+
+42 ()
+œ°_chunk
+.
+cut_fögî¥öt
+);
+
+44 
+chunks
+++;
+
+48 i‡(
+	`øbö_föÆize
+(
+hash
+Ë!
+NULL
+) {
+
+49 
+chunks
+++;
+
+50 
+	`¥ötf
+("%d %016llx\n",
+
+51 
+œ°_chunk
+.
+Àngth
+,
+
+52 ()
+œ°_chunk
+.
+cut_fögî¥öt
+);
+
+55 
+	`¥ötf
+("˙à%d\n",
+˙t
+);
+
+57 
+avg
+ = 0;
+
+58 i‡(
+chunks
+ > 0)
+
+59 
+avg
+ = 
+byãs
+ / 
+chunks
+;
+
+60 
+	`¥ötf
+("%d chunks,ávîagêchunk sizê%d\n", 
+chunks
+, 
+avg
+);
+
+63 
+	}
+}
+
+	@rabin.c
+
+1 
+	~<îr.h
+>
+
+2 
+	~<°dlib.h
+>
+
+3 
+	~<°dboﬁ.h
+>
+
+4 
+	~"øbö.h
+"
+
+6 
+	#MASK
+ ((1<<
+AVERAGE_BITS
+)-1)
+
+	)
+
+7 
+	#POL_SHIFT
+ (
+POLYNOMIAL_DEGREE
+-8)
+
+	)
+
+9 
+chunk_t
+ 
+	gœ°_chunk
+;
+
+11 
+boﬁ
+ 
+	gèbÀs_öôülized
+ = 
+Ál£
+;
+
+12 
+uöt64_t
+ 
+	gmod_èbÀ
+[256];
+
+13 
+uöt64_t
+ 
+	gout_èbÀ
+[256];
+
+15 
+	$deg
+(
+uöt64_t
+ 
+p
+) {
+
+16 
+uöt64_t
+ 
+mask
+ = 0x8000000000000000LL;
+
+18 
+i
+ = 0; i < 64; i++) {
+
+19 i‡((
+mask
+ & 
+p
+) > 0) {
+
+20  63 - 
+i
+;
+
+23 
+mask
+ >>= 1;
+
+27 
+	}
+}
+
+30 
+uöt64_t
+ 
+	$mod
+(
+uöt64_t
+ 
+x
+, uöt64_à
+p
+) {
+
+31 
+	`deg
+(
+x
+Ë>deg(
+p
+)) {
+
+32 
+shi·
+ = 
+	`deg
+(
+x
+Ë- deg(
+p
+);
+
+34 
+x
+ = x ^ (
+p
+ << 
+shi·
+);
+
+37  
+x
+;
+
+38 
+	}
+}
+
+40 
+uöt64_t
+ 
+	$≠≥nd_byã
+(
+uöt64_t
+ 
+hash
+, 
+uöt8_t
+ 
+b
+, uöt64_à
+pﬁ
+) {
+
+41 
+hash
+ <<= 8;
+
+42 
+hash
+ |(
+uöt64_t
+)
+b
+;
+
+44  
+	`mod
+(
+hash
+, 
+pﬁ
+);
+
+45 
+	}
+}
+
+47 
+	$ˇlc_èbÀs
+() {
+
+59 
+b
+ = 0; b < 256; b++) {
+
+60 
+uöt64_t
+ 
+hash
+ = 0;
+
+62 
+hash
+ = 
+	`≠≥nd_byã
+(hash, (
+uöt8_t
+)
+b
+, 
+POLYNOMIAL
+);
+
+63 
+i
+ = 0; i < 
+WINSIZE
+-1; i++) {
+
+64 
+hash
+ = 
+	`≠≥nd_byã
+(hash, 0, 
+POLYNOMIAL
+);
+
+66 
+out_èbÀ
+[
+b
+] = 
+hash
+;
+
+70 
+k
+ = 
+	`deg
+(
+POLYNOMIAL
+);
+
+71 
+b
+ = 0; b < 256; b++) {
+
+79 
+mod_èbÀ
+[
+b
+] = 
+	`mod
+(((
+uöt64_t
+)bË<< 
+k
+, 
+POLYNOMIAL
+) | ((uint64_t)b) << k;
+
+81 
+	}
+}
+
+83 
+	$øbö_≠≥nd
+(
+øbö_t
+ *
+h
+, 
+uöt8_t
+ 
+b
+) {
+
+84 
+uöt8_t
+ 
+ödex
+ = (uöt8_t)(
+h
+->
+dige°
+ >> 
+POL_SHIFT
+);
+
+85 
+h
+->
+dige°
+ <<= 8;
+
+86 
+h
+->
+dige°
+ |(
+uöt64_t
+)
+b
+;
+
+87 
+h
+->
+dige°
+ ^
+mod_èbÀ
+[
+ödex
+];
+
+88 
+	}
+}
+
+90 
+	$øbö_¶ide
+(
+øbö_t
+ *
+h
+, 
+uöt8_t
+ 
+b
+) {
+
+91 
+uöt8_t
+ 
+out
+ = 
+h
+->
+wödow
+[h->
+wpos
+];
+
+92 
+h
+->
+wödow
+[h->
+wpos
+] = 
+b
+;
+
+93 
+h
+->
+dige°
+ = (h->dige° ^ 
+out_èbÀ
+[
+out
+]);
+
+94 
+h
+->
+wpos
+ = (h->wpo†+1 ) % 
+WINSIZE
+;
+
+95 
+	`øbö_≠≥nd
+(
+h
+, 
+b
+);
+
+96 
+	}
+}
+
+98 
+	$øbö_ª£t
+(
+øbö_t
+ *
+h
+) {
+
+99 
+i
+ = 0; i < 
+WINSIZE
+; i++)
+
+100 
+h
+->
+wödow
+[
+i
+] = 0;
+
+101 
+h
+->
+dige°
+ = 0;
+
+102 
+h
+->
+wpos
+ = 0;
+
+103 
+h
+->
+cou¡
+ = 0;
+
+104 
+h
+->
+dige°
+ = 0;
+
+106 
+	`øbö_¶ide
+(
+h
+, 1);
+
+107 
+	}
+}
+
+109 
+	$øbö_√xt_chunk
+(
+øbö_t
+ *
+h
+, 
+uöt8_t
+ *
+buf
+, 
+Àn
+) {
+
+110 
+i
+ = 0; i < 
+Àn
+; i++) {
+
+111 
+uöt8_t
+ 
+b
+ = *
+buf
+++;
+
+113 
+	`øbö_¶ide
+(
+h
+, 
+b
+);
+
+115 
+h
+->
+cou¡
+++;
+
+116 
+h
+->
+pos
+++;
+
+118 i‡((
+h
+->
+cou¡
+ >
+MINSIZE
+ && ((h->
+dige°
+ & 
+MASK
+Ë=0)Ë|| h->cou¡ >
+MAXSIZE
+) {
+
+119 
+œ°_chunk
+.
+°¨t
+ = 
+h
+->start;
+
+120 
+œ°_chunk
+.
+Àngth
+ = 
+h
+->
+cou¡
+;
+
+121 
+œ°_chunk
+.
+cut_fögî¥öt
+ = 
+h
+->
+dige°
+;
+
+124 
+pos
+ = 
+h
+->pos;
+
+125 
+	`øbö_ª£t
+(
+h
+);
+
+126 
+h
+->
+°¨t
+ = 
+pos
+;
+
+127 
+h
+->
+pos
+ =Öos;
+
+129  
+i
++1;
+
+134 
+	}
+}
+
+136 
+øbö_t
+ *
+	$øbö_öô
+() {
+
+137 i‡(!
+èbÀs_öôülized
+) {
+
+138 
+	`ˇlc_èbÀs
+();
+
+139 
+èbÀs_öôülized
+ = 
+åue
+;
+
+142 
+øbö_t
+ *
+h
+;
+
+144 i‡((
+h
+ = 
+	`mÆloc
+((
+øbö_t
+))Ë=
+NULL
+) {
+
+145 
+	`îrx
+(1, "malloc()");
+
+148 
+	`øbö_ª£t
+(
+h
+);
+
+150  
+h
+;
+
+151 
+	}
+}
+
+154 
+chunk_t
+ *
+	$øbö_föÆize
+(
+øbö_t
+ *
+h
+) {
+
+155 i‡(
+h
+->
+cou¡
+ == 0) {
+
+156 
+œ°_chunk
+.
+°¨t
+ = 0;
+
+157 
+œ°_chunk
+.
+Àngth
+ = 0;
+
+158 
+œ°_chunk
+.
+cut_fögî¥öt
+ = 0;
+
+159  
+NULL
+;
+
+162 
+œ°_chunk
+.
+°¨t
+ = 
+h
+->start;
+
+163 
+œ°_chunk
+.
+Àngth
+ = 
+h
+->
+cou¡
+;
+
+164 
+œ°_chunk
+.
+cut_fögî¥öt
+ = 
+h
+->
+dige°
+;
+
+165  &
+œ°_chunk
+;
+
+166 
+	}
+}
+
+	@rabin.h
+
+1 #i‚de‡
+_RABIN_H
+
+
+2 
+	#_RABIN_H
+
+
+	)
+
+4 
+	~<°döt.h
+>
+
+6 
+	#POLYNOMIAL
+ 0x3DA3358B4DC173LL
+
+	)
+
+7 
+	#POLYNOMIAL_DEGREE
+ 53
+
+	)
+
+8 
+	#WINSIZE
+ 64
+
+	)
+
+9 
+	#AVERAGE_BITS
+ 20
+
+	)
+
+10 
+	#MINSIZE
+ (512*1024)
+
+	)
+
+11 
+	#MAXSIZE
+ (8*1024*1024)
+
+	)
+
+13 
+	søbö_t
+ {
+
+14 
+uöt8_t
+ 
+	mwödow
+[
+WINSIZE
+];
+
+15 
+	mwpos
+;
+
+16 
+	mcou¡
+;
+
+17 
+	mpos
+;
+
+18 
+	m°¨t
+;
+
+19 
+uöt64_t
+ 
+	mdige°
+;
+
+22 
+	schunk_t
+ {
+
+23 
+	m°¨t
+;
+
+24 
+	mÀngth
+;
+
+25 
+uöt64_t
+ 
+	mcut_fögî¥öt
+;
+
+28 
+chunk_t
+ 
+œ°_chunk
+;
+
+30 
+øbö_t
+ *
+øbö_öô
+();
+
+31 
+øbö_ª£t
+(
+øbö_t
+ *
+h
+);
+
+32 
+øbö_¶ide
+(
+øbö_t
+ *
+h
+, 
+uöt8_t
+ 
+b
+);
+
+33 
+øbö_≠≥nd
+(
+øbö_t
+ *
+h
+, 
+uöt8_t
+ 
+b
+);
+
+34 
+øbö_√xt_chunk
+(
+øbö_t
+ *
+h
+, 
+uöt8_t
+ *
+buf
+, 
+Àn
+);
+
+35 
+chunk_t
+ *
+øbö_föÆize
+(
+øbö_t
+ *
+h
+);
+
+	@
+1
+.
+0
+3
+23
+main.c
+rabin.c
+rabin.h
