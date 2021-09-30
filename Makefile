@@ -1,3 +1,4 @@
+CC = g++
 CFLAGS+=-Wall -W -ggdb3 -std=gnu99 -O2
 
 
@@ -5,10 +6,16 @@ CFLAGS+=-Wall -W -ggdb3 -std=gnu99 -O2
 
 all: rabin-cdc
 
-rabin.o: rabin.c rabin.h
+main.o: main.c
+#	g++ -ggdb3 -std=gnu99 -O2 -c -o $@ $^
 
-rabin-cdc: main.o rabin.o
-	$(CC) $(CFLAGS) -o $@ $^
+
+rabin.o: rabin.c rabin.h
+sha1.o: sha1.c sha1.h
+
+rabin-cdc: main.o rabin.o sha1.o
+	$(CC) $(CFLAGS) -o $@ $^ -pthread
+#	g++ $(CFLAGS)  $^
 
 clean: clean-rabin
 

@@ -3,14 +3,15 @@
 #include <stdbool.h>
 #include "rabin.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define MASK ((1<<AVERAGE_BITS)-1)
 #define POL_SHIFT (POLYNOMIAL_DEGREE-8)
 
-struct chunk_t last_chunk;
+//struct chunk_t last_chunk;
 
-static bool tables_initialized = false;
-static uint64_t mod_table[256];
-static uint64_t out_table[256];
 
 static int deg(uint64_t p) {
     uint64_t mask = 0x8000000000000000LL;
@@ -44,7 +45,7 @@ static uint64_t append_byte(uint64_t hash, uint8_t b, uint64_t pol) {
     return mod(hash, pol);
 }
 
-static void calc_tables(void) {
+static void calc_tables(rabin_t* h) {
     // calculate table for sliding out bytes. The byte to slide out is used as
     // the index for the table, the value contains the following:
     // out_table[b] = Hash(b || 0 ||        ...        || 0)
@@ -63,7 +64,7 @@ static void calc_tables(void) {
         for (int i = 0; i < WINSIZE-1; i++) {
             hash = append_byte(hash, 0, POLYNOMIAL);
         }
-        out_table[b] = hash;
+        h->out_table[b] = hash;
     }
 
     // calculate table for reduction mod Polynomial
@@ -76,7 +77,7 @@ static void calc_tables(void) {
         // two parts: Part A contains the result of the modulus operation, part
         // B is used to cancel out the 8 top bits so that one XOR operation is
         // enough to reduce modulo Polynomial
-        mod_table[b] = mod(((uint64_t)b) << k, POLYNOMIAL) | ((uint64_t)b) << k;
+        h->mod_table[b] = mod(((uint64_t)b) << k, POLYNOMIAL) | ((uint64_t)b) << k;
     }
 }
 
@@ -84,13 +85,13 @@ void rabin_append(struct rabin_t *h, uint8_t b) {
     uint8_t index = (uint8_t)(h->digest >> POL_SHIFT);
     h->digest <<= 8;
     h->digest |= (uint64_t)b;
-    h->digest ^= mod_table[index];
+    h->digest ^= h->mod_table[index];
 }
 
 void rabin_slide(struct rabin_t *h, uint8_t b) {
     uint8_t out = h->window[h->wpos];
     h->window[h->wpos] = b;
-    h->digest = (h->digest ^ out_table[out]);
+    h->digest = (h->digest ^ h->out_table[out]);
     h->wpos = (h->wpos +1 ) % WINSIZE;
     rabin_append(h, b);
 }
@@ -116,9 +117,9 @@ int rabin_next_chunk(struct rabin_t *h, uint8_t *buf, unsigned int len) {
         h->pos++;
 
         if ((h->count >= MINSIZE && ((h->digest & MASK) == 0)) || h->count >= MAXSIZE) {
-            last_chunk.start = h->start;
-            last_chunk.length = h->count;
-            last_chunk.cut_fingerprint = h->digest;
+            h->last_chunk.start = h->start;
+            h->last_chunk.length = h->count;
+            h->last_chunk.cut_fingerprint = h->digest;
 
             // keep position
             unsigned int pos = h->pos;
@@ -134,17 +135,17 @@ int rabin_next_chunk(struct rabin_t *h, uint8_t *buf, unsigned int len) {
 }
 
 struct rabin_t *rabin_init(void) {
-    if (!tables_initialized) {
-        calc_tables();
-        tables_initialized = true;
-    }
 
     struct rabin_t *h;
 
-    if ((h = malloc(sizeof(struct rabin_t))) == NULL) {
+    if ((h = (rabin_t*)malloc(sizeof(struct rabin_t))) == NULL) {
         errx(1, "malloc()");
     }
 
+//    if (!h->tables_initialized) {
+        calc_tables(h);
+        h->tables_initialized = true;
+  //  }
     rabin_reset(h);
 
     return h;
@@ -153,14 +154,17 @@ struct rabin_t *rabin_init(void) {
 
 struct chunk_t *rabin_finalize(struct rabin_t *h) {
     if (h->count == 0) {
-        last_chunk.start = 0;
-        last_chunk.length = 0;
-        last_chunk.cut_fingerprint = 0;
+        h->last_chunk.start = 0;
+        h->last_chunk.length = 0;
+        h->last_chunk.cut_fingerprint = 0;
         return NULL;
     }
 
-    last_chunk.start = h->start;
-    last_chunk.length = h->count;
-    last_chunk.cut_fingerprint = h->digest;
-    return &last_chunk;
+    h->last_chunk.start = h->start;
+    h->last_chunk.length = h->count;
+    h->last_chunk.cut_fingerprint = h->digest;
+    return &h->last_chunk;
 }
+#ifdef __cplusplus
+}
+#endif
